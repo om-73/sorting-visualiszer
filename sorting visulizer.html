@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Sorting Visualization</title>
+  <style>
+    #bars-container {
+  display: flex;
+  justify-content: center;
+  align-items: flex-end;
+  height: 400px;
+}
+
+.bar {
+  width: 20px;
+  background-color: dodgerblue;
+  margin: 0 1px;
+}
+  </style>
+</head>
+<body>
+  <div id="bars-container"></div>
+  <input type="text" id="num-bars-input" placeholder="Enter the number of bars">
+  <button id="generate-button">Generate Bars</button>
+  <button id="sort-button">Sort</button>
+
+  <script >
+    const barsContainer = document.getElementById('bars-container');
+const numBarsInput = document.getElementById('num-bars-input');
+const generateButton = document.getElementById('generate-button');
+const sortButton = document.getElementById('sort-button');
+const delay = 0.001; // Delay in milliseconds between each step
+let bars = [];
+let array = [];
+
+// Function to generate random array of numbers
+function generateBars() {
+  const numBars = parseInt(numBarsInput.value);
+  if (isNaN(numBars) || numBars <= 0) {
+    alert('Please enter a valid number of bars.');
+    return;
+  }
+
+  // Clear previous bars
+  barsContainer.innerHTML = '';
+  bars = [];
+  array = [];
+
+  for (let i = 0; i < numBars; i++) {
+    const value = Math.floor(Math.random() * 100) + 1;
+    array.push(value);
+
+    const bar = document.createElement('div');
+    bar.classList.add('bar');
+    bar.style.height = `${value * 4}px`;
+    barsContainer.appendChild(bar);
+    bars.push(bar);
+  }
+}
+
+// Bubble sort algorithm
+async function bubbleSort() {
+  for (let i = 0; i < array.length - 1; i++) {
+    for (let j = 0; j < array.length - i - 1; j++) {
+      // Highlight the two bars being compared
+      bars[j].style.backgroundColor = 'red';
+      bars[j + 1].style.backgroundColor = 'red';
+
+      await new Promise((resolve) => setTimeout(resolve, delay));
+
+      // Swap bars if necessary
+      if (array[j] > array[j + 1]) {
+        [array[j], array[j + 1]] = [array[j + 1], array[j]];
+        [bars[j].style.height, bars[j + 1].style.height] = [bars[j + 1].style.height, bars[j].style.height];
+      }
+
+      // Reset the color of the compared bars
+      bars[j].style.backgroundColor = 'dodgerblue';
+      bars[j + 1].style.backgroundColor = 'dodgerblue';
+    }
+
+    // Mark the sorted bar in green
+    bars[array.length - i - 1].style.backgroundColor = 'limegreen';
+  }
+
+  // Mark the first bar in green (already sorted)
+  bars[0].style.backgroundColor = 'limegreen';
+}
+
+// Event listeners for buttons
+generateButton.addEventListener('click', generateBars);
+sortButton.addEventListener('click', bubbleSort);
+  </script>
+</body>
+</html>
