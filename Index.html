@@ -4,92 +4,159 @@
   <title>Sorting Visualization</title>
   <style>
     #bars-container {
-  display: flex;
-  justify-content: center;
-  align-items: flex-end;
-  height: 400px;
-}
+      display: flex;
+      justify-content: center;
+      align-items: flex-end;
+      height: 400px;
+    }
 
-.bar {
-  width: 20px;
-  background-color: dodgerblue;
-  margin: 0 1px;
-}
+    .bar {
+      width: 20px;
+      background-color: dodgerblue;
+      margin: 0 1px;
+    }
   </style>
 </head>
 <body>
-  <h1>sorting your genrated bar </h1>
+  <h1>Sorting Visualization</h1>
   <div id="bars-container"></div>
   <input type="text" id="num-bars-input" placeholder="Enter the number of bars">
   <button id="generate-button">Generate Bars</button>
+  <select id="algorithm-select">
+    <option value="bubble">Bubble Sort</option>
+    <option value="selection">Selection Sort</option>
+    <option value="insertion">Insertion Sort</option>
+    <option value="merge">Merge Sort</option>
+    <option value="quick">Quick Sort</option>
+  </select>
   <button id="sort-button">Sort</button>
 
-  <script >
+  <script>
     const barsContainer = document.getElementById('bars-container');
-const numBarsInput = document.getElementById('num-bars-input');
-const generateButton = document.getElementById('generate-button');
-const sortButton = document.getElementById('sort-button');
-const delay = 0.001; // Delay in milliseconds between each step
-let bars = [];
-let array = [];
+    const numBarsInput = document.getElementById('num-bars-input');
+    const generateButton = document.getElementById('generate-button');
+    const sortButton = document.getElementById('sort-button');
+    const algorithmSelect = document.getElementById('algorithm-select');
+    const delay = 50; // Delay in milliseconds between each step
+    let bars = [];
+    let array = [];
 
-// Function to generate random array of numbers
-function generateBars() {
-  const numBars = parseInt(numBarsInput.value);
-  if (isNaN(numBars) || numBars <= 0) {
-    alert('Please enter a valid number of bars.');
-    return;
-  }
-
-  // Clear previous bars
-  barsContainer.innerHTML = '';
-  bars = [];
-  array = [];
-
-  for (let i = 0; i < numBars; i++) {
-    const value = Math.floor(Math.random() * 100) + 1;
-    array.push(value);
-
-    const bar = document.createElement('div');
-    bar.classList.add('bar');
-    bar.style.height = `${value * 4}px`;
-    barsContainer.appendChild(bar);
-    bars.push(bar);
-  }
-}
-
-// Bubble sort algorithm
-async function bubbleSort() {
-  for (let i = 0; i < array.length - 1; i++) {
-    for (let j = 0; j < array.length - i - 1; j++) {
-      // Highlight the two bars being compared
-      bars[j].style.backgroundColor = 'red';
-      bars[j + 1].style.backgroundColor = 'red';
-
-      await new Promise((resolve) => setTimeout(resolve, delay));
-
-      // Swap bars if necessary
-      if (array[j] > array[j + 1]) {
-        [array[j], array[j + 1]] = [array[j + 1], array[j]];
-        [bars[j].style.height, bars[j + 1].style.height] = [bars[j + 1].style.height, bars[j].style.height];
+    // Function to generate random array of numbers
+    function generateBars() {
+      const numBars = parseInt(numBarsInput.value);
+      if (isNaN(numBars) || numBars <= 0) {
+        alert('Please enter a valid number of bars.');
+        return;
       }
 
-      // Reset the color of the compared bars
-      bars[j].style.backgroundColor = 'dodgerblue';
-      bars[j + 1].style.backgroundColor = 'dodgerblue';
+      // Clear previous bars
+      barsContainer.innerHTML = '';
+      bars = [];
+      array = [];
+
+      for (let i = 0; i < numBars; i++) {
+        const value = Math.floor(Math.random() * 100) + 1;
+        array.push(value);
+
+        const bar = document.createElement('div');
+        bar.classList.add('bar');
+        bar.style.height = `${value * 4}px`;
+        barsContainer.appendChild(bar);
+        bars.push(bar);
+      }
     }
 
-    // Mark the sorted bar in green
-    bars[array.length - i - 1].style.backgroundColor = 'limegreen';
-  }
+    // Bubble sort algorithm
+    async function bubbleSort() {
+      for (let i = 0; i < array.length - 1; i++) {
+        for (let j = 0; j < array.length - i - 1; j++) {
+          bars[j].style.backgroundColor = 'red';
+          bars[j + 1].style.backgroundColor = 'red';
 
-  // Mark the first bar in green (already sorted)
-  bars[0].style.backgroundColor = 'limegreen';
-}
+          await new Promise((resolve) => setTimeout(resolve, delay));
 
-// Event listeners for buttons
-generateButton.addEventListener('click', generateBars);
-sortButton.addEventListener('click', bubbleSort);
+          if (array[j] > array[j + 1]) {
+            [array[j], array[j + 1]] = [array[j + 1], array[j]];
+            [bars[j].style.height, bars[j + 1].style.height] = [bars[j + 1].style.height, bars[j].style.height];
+          }
+
+          bars[j].style.backgroundColor = 'dodgerblue';
+          bars[j + 1].style.backgroundColor = 'dodgerblue';
+        }
+        bars[array.length - i - 1].style.backgroundColor = 'limegreen';
+      }
+      bars[0].style.backgroundColor = 'limegreen';
+    }
+
+    // Selection sort algorithm
+    async function selectionSort() {
+      for (let i = 0; i < array.length; i++) {
+        let minIndex = i;
+        bars[minIndex].style.backgroundColor = 'red';
+
+        for (let j = i + 1; j < array.length; j++) {
+          bars[j].style.backgroundColor = 'yellow';
+
+          await new Promise((resolve) => setTimeout(resolve, delay));
+
+          if (array[j] < array[minIndex]) {
+            bars[minIndex].style.backgroundColor = 'dodgerblue';
+            minIndex = j;
+            bars[minIndex].style.backgroundColor = 'red';
+          } else {
+            bars[j].style.backgroundColor = 'dodgerblue';
+          }
+        }
+
+        if (minIndex !== i) {
+          [array[i], array[minIndex]] = [array[minIndex], array[i]];
+          [bars[i].style.height, bars[minIndex].style.height] = [bars[minIndex].style.height, bars[i].style.height];
+        }
+
+        bars[i].style.backgroundColor = 'limegreen';
+      }
+    }
+
+    // Insertion sort algorithm
+    async function insertionSort() {
+      for (let i = 1; i < array.length; i++) {
+        let key = array[i];
+        let j = i - 1;
+
+        bars[i].style.backgroundColor = 'red';
+
+        while (j >= 0 && array[j] > key) {
+          bars[j].style.backgroundColor = 'yellow';
+
+          await new Promise((resolve) => setTimeout(resolve, delay));
+
+          array[j + 1] = array[j];
+          bars[j + 1].style.height = bars[j].style.height;
+
+          bars[j].style.backgroundColor = 'dodgerblue';
+          j--;
+        }
+
+        array[j + 1] = key;
+        bars[j + 1].style.height = `${key * 4}px`;
+
+        bars[i].style.backgroundColor = 'dodgerblue';
+      }
+
+      for (let i = 0; i < array.length; i++) {
+        bars[i].style.backgroundColor = 'limegreen';
+      }
+    }
+
+    // Event listeners for buttons
+    generateButton.addEventListener('click', generateBars);
+    sortButton.addEventListener('click', () => {
+      const algorithm = algorithmSelect.value;
+      if (algorithm === 'bubble') bubbleSort();
+      else if (algorithm === 'selection') selectionSort();
+      else if (algorithm === 'insertion') insertionSort();
+      // Add other algorithms here
+    });
   </script>
 </body>
 </html>
